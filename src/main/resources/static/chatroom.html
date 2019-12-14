@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh">
+<head>
+    <meta charset="UTF-8"/>
+    <title></title>
+    <link href="css/videojs.css" rel="stylesheet">
+    <script src="js/lib/videojs.js"></script>
+    <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.css" rel="stylesheet">
+    <link href="css/bootstrap.css" rel="stylesheet"/>
+    <script src="js/lib/sockjs.min.js"></script>
+    <script src="js/lib/stomp.js"></script>
+    <script src="js/lib/jquery-2.1.0.min.js"></script>
+    <script src="js/lib/bootstrap.js"></script>
+    <script src="js/lib/vue.js"></script>
+
+    <style>
+        .col-center-block {
+            float: none;
+            display: block;
+            overflow: auto;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .tab-content > .active {
+            border: 1px solid #ddd;
+            height: 360px;
+            /*border-top: none;*/
+        }
+
+        .nav-pills > li > a {
+            border-radius: 0;
+        }
+
+        #chatinput .form-control {
+            border-radius: 0;
+        }
+
+        #chatinput .btn {
+            border-radius: 0;
+        }
+
+        .anchorNotice {
+            width: 15px;
+            font-size: 15px;
+            word-wrap: break-word;
+            letter-spacing: 0;
+            margin-left: 20px;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+<div class="container" id="chatroom">
+        <div class="col-md-4">
+            <!--tabs-->
+            <ul id="menuTabs" class="nav nav-pills nav-justified">
+                <li class="active">
+                    <a href="#discussion" data-toggle="tab"><i class="fa fa-tree"></i>互动聊天</a>
+                </li>
+                <li>
+                    <a href="#members" data-toggle="tab"><i class="fa fa-tree"></i>现场嘉宾({{number}})</a>
+                </li>
+                <li>
+                    <a href="#guests" data-toggle="tab"><i class="fa fa-tree"></i>最近访问</a>
+                </li>
+            </ul>
+            <!--内容滚动区域开始-->
+            <div id="tabContent" class="tab-content">
+                <div class="tab-pane fade active in" id="discussion" style="padding:10px;">
+                    <div v-for="message in messages">
+                        <span style="color: cornflowerblue;">{{message.creator}}:</span>
+                        <span>{{message.msgBody}}</span>
+                    </div>
+                </div>
+                <!--内容滚动区域结束-->
+                <!--现场观众统计开始-->
+                <div class="tab-pane fade in" style="padding-top: 10px;" id="members">
+                    <div th:each="user : ${online_guests}">
+                        <span style="color: cornflowerblue;" th:text="${user.randomName}"></span>
+                        <span th:text="${user.ip}">${user.ip}</span>
+                    </div>
+                </div>
+                <!--现场观众统计结束-->
+                <!--最近访问统计总数-->
+                <div class="tab-pane fade in" style="padding-top: 10px;" id="guests">
+                    <div th:each="guest : ${history_guests}">
+                        <span style="color: cornflowerblue;" th:text="${guest.userEntity.randomName}"></span>
+                        <span th:text="${guest.userEntity.ip}"></span>
+                        <span th:text="${#calendars.format(guest.accessTime,'yyyy-MM-dd mm:ss')}"></span>
+                    </div>
+                </div>
+            </div>
+            <div id="chatinput" class="input-group" style="margin-top: 5px;">
+                <input type="text" class="form-control" v-model="messageinput" @keyup.13="sendMessage"
+                       placeholder="参与话题讨论">
+                <span class="input-group-btn">
+				        	<button class="btn btn-success" type="button" @click="sendMessage">发送!</button>
+				      </span>
+            </div>
+        </div>
+        <!--
+            作者：979783618@qq.com
+            时间：2017-05-14
+            描述：右侧讨论区结束
+        -->
+    </div>
+</div>
+<div class="footer" style="margin-top: 60px;background:rgb(71, 213, 175);">
+    <div class="container">
+        <div class="row footer-top">
+            <div class="col-sm-6 col-lg-6">
+                <h4></h4>
+                <p></p>
+            </div>
+            <div class="col-sm-6  col-lg-6 ">
+                <div class="row about">
+
+                    <div class="col-xs-5 pull-right">
+                        <h4>联系方式</h4>
+                        <ul class="list-unstyled">
+                            <li>
+                                <a target="_blank" title="个人博客" href="http://blog.csdn.net/hushangjie">我的博客</a>
+                            </li>
+                            <li>
+                                <a href="">我的邮箱:979783618@qq.com</a>
+                            </li>
+                            <li>
+                                <a href="">手机号:15579870840</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-xs-3 pull-right">
+                        <h4>关于我</h4>
+                        <ul class="list-unstyled">
+                            <li>
+                                <a target="_blank" href="http://www.500d.me/resume/979783618/">个人简介</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <hr>
+        <div class="row footer-bottom">
+            <ul class="list-inline text-center">
+                <li>Copyright &copy;2017. n by江西财经大学软件与通信工程学院软件工程 Jack-hoo</li>
+            </ul>
+        </div>
+    </div>
+    <script src="js/index.js" type="application/javascript"></script>
+    <script src="js/chatroom.js"></script>
+</div>
+</body>
+</html>
